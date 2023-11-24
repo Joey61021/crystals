@@ -1,0 +1,10 @@
+name: Crystals
+main: com.crystals.plugin.Main
+api-version: 1.19
+version: ${project.version}
+
+softdepend: [PlaceholderAPI]
+
+commands:
+  crystal:
+    aliases: [crystals]

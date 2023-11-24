@@ -1,0 +1,11 @@
+generic:
+  messages:
+    no-console: '&cYou cannot use this command via console.'
+    crystal:
+      found: '&d&lLOST CRYSTAL FOUND! &eYou have found a &dLost Crystal&e! &6(%found%/%total%)'
+      already-found: '&cSorry, but you have already found this lost crystal!'
+      found-all: '&d&lLOST CRYSTAL FOUND! &bYou have found &3&lALL &dLost Crystals&e! &3(%found%/%total%)'
+commands:
+  crystal:
+    message: '&eYou have found &d%found%/%total%&e!'
+    reloaded: '&aCrystals have been successfully reloaded!'
