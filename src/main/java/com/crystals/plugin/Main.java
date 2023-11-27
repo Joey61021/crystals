@@ -8,7 +8,9 @@ import com.crystals.plugin.services.crystal.CrystalService;
 import com.crystals.plugin.services.message.MessageService;
 import com.crystals.plugin.utilities.Config;
 import com.crystals.plugin.utilities.PAPIExpansion;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -18,6 +20,9 @@ public class Main extends JavaPlugin {
 	private Config databaseConfig;
 	private Config crystalsConfig;
 
+	//	Dependencies
+	private Economy economy;
+
 //	Services
 	private MessageService messageService;
 	private CrystalService crystalService;
@@ -25,6 +30,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		loadFiles();
+		setupEco();
 		setupServices();
 		registerEvents();
 		registerCommands();
@@ -46,9 +52,17 @@ public class Main extends JavaPlugin {
 		crystalsConfig = new Config(this, getDataFolder(), "crystals", "crystals.yml");
 	}
 
+	void setupEco() {
+		if (!getServer().getPluginManager().isPluginEnabled("Vault")) return;
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+
+		if (economyProvider != null) economy = economyProvider.getProvider();
+		else System.err.println("Vault and a supported economy API plugin was not found, for economy support please ensure that this is corrected!");
+	}
+
 	void setupServices() {
 		messageService = new MessageService(config);
-		crystalService = new CrystalService(crystalsConfig, messageService);
+		crystalService = new CrystalService(crystalsConfig, messageService, config, economy);
 	}
 
 	void registerListener(Listener listener) {

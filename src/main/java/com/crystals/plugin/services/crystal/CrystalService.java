@@ -8,6 +8,7 @@ import com.crystals.plugin.utilities.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -29,6 +31,10 @@ public class CrystalService implements Listener {
 	private final Config         crystalConfig;
 	@NonNull
 	private final MessageService messageService;
+	@NonNull
+	private final Config         config;
+	@Nullable
+	private final Economy        economy;
 
 	@Getter private String title;
 	@Getter private World  world;
@@ -96,9 +102,12 @@ public class CrystalService implements Listener {
 			}
 			addCrystal(player, identifier);
 			boolean all_found = foundCrystalsList.size()+1 == crystals.size()-1;
+			double amount = config.getDouble(all_found ? "generic.rewards.found-all" : "generic.rewards.found");
+			if (economy != null) economy.depositPlayer(player, amount);
 			messageService.sendMessage(player,
 										all_found ? Message.GENERIC_CRYSTAL_FOUND_ALL : Message.GENERIC_CRYSTAL_FOUND,
-										(s) -> s.replace("%found%", String.valueOf(foundCrystalsList.size()+1))
+										(s) -> s.replace("%amount%", String.valueOf(amount))
+												.replace("%found%", String.valueOf(foundCrystalsList.size()+1))
 												.replace("%total%", String.valueOf(crystals.size()-1)));
 			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
 		} catch (NumberFormatException ignored) {}
